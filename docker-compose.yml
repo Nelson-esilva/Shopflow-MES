@@ -1,0 +1,149 @@
+services:
+  backend:
+    build: 
+      context: .               
+      dockerfile: ./docker/Dockerfile
+    image: django-image
+    container_name: backend-api
+    restart: unless-stopped
+    entrypoint: /entrypoint.sh
+    # command: gunicorn shopflow.wsgi:application --bind 0.0.0.0:8000 --workers 4 --timeout 120
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./docker/.env
+    labels:
+      - "io.portainer.accesscontrol.public=true"
+    networks:
+      - app-network
+
+  frontend:
+    image: node:20
+    container_name: react-web
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - ./frontend/src/assets:/app/src/assets
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
+    ports:
+      - "5173:5173"
+    env_file:
+      - ./frontend/.env
+    labels:
+      - "io.portainer.accesscontrol.public=true"
+    networks:
+      - app-network
+    
+  postgres:
+    image: postgres:15
+    container_name: postgresdb
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./backend/.env
+    labels:
+      - "io.portainer.accesscontrol.public=true"
+    networks:
+      - app-network
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse
+    env_file:
+      - ./docker/.env
+    ports:
+      - "9001:9000"
+      - "8123:8123" 
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - ./clickhouse/clickhouse_init/create_user.sh:/docker-entrypoint-initdb.d/create_user.sh
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--host", "localhost", "--query", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+    networks:
+      - app-network
+
+  kafka_broker_1:
+    image: apache/kafka:latest
+    hostname: kafka_broker_1
+    container_name: kafka_broker_1
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+      - "29092:29092"
+      - "29093:29093"
+    env_file:
+      - ./docker/.env
+    volumes:
+      - ./backend/kafka:/var/lib/kafka/data
+    networks:
+      - app-network
+
+  kafka_consumer:
+    build: 
+      context: .               
+      dockerfile: ./docker/Dockerfile.kafka_consumer
+    image: kafka_consumer
+    container_name: kafka_consumer
+    volumes:
+      - ./backend/kafka:/app/kafka
+      - ./backend:/app
+    depends_on:
+      - kafka_broker_1
+    env_file:
+      - ./docker/.env
+    networks:
+      - app-network
+
+  kafka_streaming:    
+    build: 
+      context: .               
+      dockerfile: ./docker/Dockerfile.kafka_streaming
+    container_name: kafka_streaming
+    image: kafka_streaming
+    volumes:
+      - ./backend/kafka:/app/kafka
+      - ./backend:/app
+    depends_on:
+      - kafka_consumer
+      - kafka_broker_1
+    env_file:
+      - ./docker/.env
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - clickhouse
+    env_file:
+      - ./docker/.env
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - app-network
+
+volumes:
+  grafana_data:
+    driver: local
+  postgres_data:
+    driver: local
+  clickhouse_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

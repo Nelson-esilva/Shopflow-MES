@@ -1,0 +1,119 @@
+/* Visualização dos eventos dentro do calendário */
+.fc-event {
+  border-radius: 30px !important;
+  border: none !important;
+  box-shadow: none !important;
+  transition: all 0.3s ease !important;
+  min-height: 70px !important;
+  margin: 2px 0 !important;
+  position: relative !important;
+}
+
+.fc-event:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10) !important;
+  transform: translateY(-1px) !important;
+  border-color: none !important;
+}
+
+/* Remover o ponto padrão dos eventos */
+.fc-daygrid-event-dot {
+  display: none !important;
+}
+
+/* Ajustar o padding interno dos eventos */
+.fc-event-main {
+  padding: 0 !important;
+}
+
+/* Melhorar o espaçamento entre eventos */
+.fc-daygrid-day-events {
+  margin-top: 3px !important;
+  gap: 2px !important;
+}
+
+/* Estilo para o conteúdo customizado dos eventos */
+.custom-event-content {
+  font-family: 'Roboto', sans-serif !important;
+  letter-spacing: 0.2px !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* Melhorar a legibilidade do texto */
+.custom-event-content .MuiTypography-caption {
+  line-height: 1.4 !important;
+  letter-spacing: 0.1px !important;
+}
+
+/* Efeito de hover mais suave */
+.custom-event-content:hover {
+  transform: scale(1.01) !important;
+}
+
+/* Fundo do calendário geral */
+.fc-daygrid-day {
+  background-color: #ffffff !important;
+  border: 1px solid #e0e0e0 !important;
+}
+
+.fc-daygrid-day:hover {
+  background-color: #f8f9fa !important;
+}
+
+/* Estilo para o cabeçalho do calendário */
+.fc-col-header {
+  background-color: #f5f5f5 !important;
+  border-bottom: 2px solid #e0e0e0 !important;
+}
+
+.fc-col-header-cell {
+  padding: 8px 0 !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+}
+
+/* Melhorar a visualização do link "mais eventos" */
+.fc-daygrid-more-link {
+  background-color: #1976d2 !important;
+  color: white !important;
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+}
+
+.fc-daygrid-more-link:hover {
+  background-color: #1565c0 !important;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .fc-event {
+    min-height: 60px !important;
+    font-size: 0.7rem !important;
+  }
+  
+  .custom-event-content {
+    padding: 0.5rem !important;
+  }
+  
+  .custom-event-content .MuiTypography-caption {
+    font-size: 0.6rem !important;
+  }
+}
+
+/* Animações suaves */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fc-event {
+  animation: fadeInUp 0.3s ease-out;
+} 
