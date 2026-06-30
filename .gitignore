@@ -52,3 +52,17 @@ Thumbs.db
 
 # Templates
 *templates_html/
+
+# Artefatos acidentais de docker build (output redirecionado para arquivos na raiz)
+/=
+/CACHED
+/[internal]
+/exporting
+/extracting
+/naming
+/reading
+/resolve
+/resolving
+/transferring
+/writing
+/sha256:*
