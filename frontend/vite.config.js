@@ -4,7 +4,6 @@ import path from 'path';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
-
   const isDevelopment = mode === 'development';
 
   return {
@@ -16,34 +15,27 @@ export default defineConfig(({ mode }) => {
       hmr: {
         protocol: 'ws',
         host: 'localhost',
-        port: 5173
+        port: 5173,
       },
       watch: {
-        usePolling: true
+        usePolling: true,
       },
-      allowedHosts: ['localhost']
+      allowedHosts: ['localhost'],
     },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
-        '@assets': path.resolve(__dirname, './src/assets')
-      }
-    },
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: `@import "@/styles/main.scss";`
-        }
-      }
+        '@assets': path.resolve(__dirname, './src/assets'),
+      },
     },
     define: {
       __APP_ENV__: JSON.stringify(env.VITE_ENV),
-      __APP_VERSION__: JSON.stringify(env.VITE_APP_VERSION)
+      __APP_VERSION__: JSON.stringify(env.VITE_APP_VERSION),
     },
     build: {
       target: 'esnext',
       outDir: 'dist',
-      sourcemap: isDevelopment, // só usa sourcemaps no desenvolvimento
+      sourcemap: isDevelopment,
       minify: 'esbuild',
       chunkSizeWarningLimit: 500,
       rollupOptions: {
@@ -52,9 +44,9 @@ export default defineConfig(({ mode }) => {
             if (id.includes('node_modules')) {
               return 'vendor';
             }
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   };
 });

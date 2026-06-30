@@ -14,15 +14,12 @@ import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuth } from '../contexts/AuthContext';
-import { useGoogleAuth } from '../contexts/GoogleAuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useTheme, useMediaQuery } from '@mui/material';
 
 function HorizontalMenu({ onHamburgerClick, menuWidth }) {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const { user: jwtUser, logout } = useAuth();
-  const { user: googleUser, logoutGoogle } = useGoogleAuth();
-  const user = googleUser || jwtUser; // Consolida o usuário logado
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -37,15 +34,8 @@ function HorizontalMenu({ onHamburgerClick, menuWidth }) {
 
   const handleLogout = async () => {
     try {
-      if (googleUser) {
-        await logoutGoogle();
-      } else {
-        await logout();
-      }
-      handleCloseUserMenu();
-      navigate('/login');
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error); // Adicionado para melhor depuração
+      await logout();
+    } finally {
       handleCloseUserMenu();
       navigate('/login');
     }

@@ -32,7 +32,6 @@ function getProductSuccessMessage(action) {
 const ProductsPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const [successAlert, setSuccessAlert] = useState({ open: false, message: '' });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -63,13 +62,8 @@ const ProductsPage = () => {
     // eslint-disable-next-line
   }, [page, pageSize, ordering]);
 
-  const handleCloseSuccessAlert = () => {
-    setSuccessAlert(prev => ({ ...prev, open: false }));
-  };
-
   const handleViewProduct = (product) => {
-    // Implementar visualização do produto
-    console.log('Visualizar produto:', product);
+    // TODO: implementar visualizacao do produto
   };
 
   // Handlers integrados com toast
@@ -218,17 +212,7 @@ const ProductsPage = () => {
               </Alert>
             )}
 
-            {successAlert.open && (
-              <Alert 
-                severity="success" 
-                onClose={handleCloseSuccessAlert}
-                sx={{ mx: 3, mb: 3 }}
-              >
-                {successAlert.message}
-              </Alert>
-            )}
-
-            <Box 
+            <Box
               sx={{ 
                 mx: 'auto', 
                 width: '100%', 

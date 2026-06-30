@@ -38,7 +38,7 @@ import {
 } from '@mui/icons-material';
 import { listOrders, deleteOrder, createOrder, updateOrder } from './orderApi';
 import CreateOrderDialog from './dialogs/CreateOrderDialog';
-import OrderDetails from './OrderDetails';
+import OrderMainDetails from './orderview/OrderMainDetails';
 import DeleteOrderDialog from './dialogs/DeleteOrderDialog';
 import OrderSearchBar from './search/OrderSearchBar';
 import EditOrderDialog from './dialogs/EditOrderDialog';
@@ -395,7 +395,7 @@ const ProductionOrderTable = () => {
 
   if (viewMode === 'details') {
     return (
-      <OrderDetails 
+      <OrderMainDetails 
         order={selectedOrder} 
         onBack={handleBackToList}
         onOrderUpdate={handleOrderUpdate}

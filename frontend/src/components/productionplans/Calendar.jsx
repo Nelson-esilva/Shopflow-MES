@@ -23,10 +23,9 @@ import {
 import { CreateProductionPlanModal } from './modals';
 import { turnos } from './data';
 import DailyProductionView from './DailyProductionView';
-import { listPlans } from './plansApi';
+import { listPlans, deletePlan } from './plansApi';
 import './Calendar.css';
 import { listProducts } from '../products/productsApi';
-import axios from 'axios';
 import DeleteProductionPlanModal from './modals/DeleteProductionPlanModal';
 
 const Calendar = ({ currentView, setCurrentView, openPlanModal, setOpenPlanModal }) => {
@@ -556,13 +555,7 @@ const Calendar = ({ currentView, setCurrentView, openPlanModal, setOpenPlanModal
   // Função para deletar plano
   const handleDeletePlan = async (planId) => {
     try {
-      const token = localStorage.getItem('access_token');
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/plans/${planId}/`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        }
-      });
+      await deletePlan(planId);
       setEvents((prev) => prev.filter(ev => !ev.id.startsWith(planId.toString())));
     } catch (error) {
       alert('Erro ao excluir plano!');
