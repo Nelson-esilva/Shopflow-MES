@@ -1,12 +1,12 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status, generics, filters
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework import viewsets, status, filters
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import User
 from .filters import UserFilter
 from .pagination import StandardResultsSetPagination
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserRoleSerializer, UserRoleUpdateSerializer, UserCreateSerializer, UserProfileUpdateSerializer, PasswordChangeSerializer
+from .serializers import UserRoleSerializer, UserRoleUpdateSerializer, UserCreateSerializer, PasswordChangeSerializer
 from .decorators import permission_required
 from django.utils.decorators import method_decorator
 from django.utils import timezone
@@ -68,7 +68,7 @@ class UserManagementViewSet(viewsets.ModelViewSet):
 
         if request.user.id == instance.id:
             return Response(
-                {'error': 'Você não pode alterar seu próprio perfil através deste endpoint. Use o endpoint /api/me/.'},
+                {'error': 'Voce nao pode alterar seu proprio perfil atraves deste endpoint. Use /api/auth/profile/.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -204,36 +204,6 @@ class UserManagementViewSet(viewsets.ModelViewSet):
         
         self.perform_destroy(user_to_delete)
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-class ProfileView(generics.RetrieveUpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserProfileUpdateSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
-
-    def get(self, request, *args, **kwargs):
-        serializer = UserRoleSerializer(self.get_object())
-        return Response(serializer.data)
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def my_permissions(request):
-    user = request.user
-    return Response({
-        'user': {
-            'id': user.id,
-            'name': user.name,
-            'email': user.email,
-            'role': user.role,
-            'role_display': user.get_role_display()
-        },
-        'permissions': user.get_permissions(),
-        'can_manage_users': user.can_manage_users(),
-        'can_change_roles': user.can_change_user_role(),
-        'can_export_reports': user.can_export_reports()
-    })
 
 class PasswordChangeAPIView(APIView):
     permission_classes = [IsAuthenticated]

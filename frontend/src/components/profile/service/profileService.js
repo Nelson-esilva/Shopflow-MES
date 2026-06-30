@@ -37,7 +37,7 @@ const userApi = {
   getMe: async () => {
     try {
       console.log('Iniciando busca das informações do usuário logado...');
-      const options = createAxiosOptions('GET', '/me/');
+      const options = createAxiosOptions('GET', '/auth/profile/');
       console.log('Options da requisição (getMe):', options);
       const response = await axios.request(options);
       console.log('Dados do usuário logado recebidos:', response.data);
@@ -56,7 +56,7 @@ const userApi = {
   updateMe: async (userData) => {
     try {
       console.log('Atualizando informações do usuário logado:', userData);
-      const options = createAxiosOptions('PUT', '/me/', userData); 
+      const options = createAxiosOptions('PUT', '/auth/profile/', userData);
       console.log('Options da requisição (updateMe):', options);
 
       const response = await axios.request(options);
@@ -78,7 +78,7 @@ const userApi = {
     try {
       console.log('Iniciando mudança de senha...');
       // passwordData deve conter old_password, new_password, confirm_password
-      const options = createAxiosOptions('POST', '/me/change-password/', passwordData);
+      const options = createAxiosOptions('POST', '/auth/change-password/', passwordData);
       console.log('Options da requisição (changePassword):', options);
       const response = await axios.request(options);
       console.log('Resposta de mudança de senha:', response.data);

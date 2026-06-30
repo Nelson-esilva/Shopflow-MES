@@ -126,10 +126,6 @@ const ProductionDashboard = () => {
   }, [filters, selectedDate, customDate, showGeneralData]);
 
   const handleTabChange = (tab) => {
-    if (tab === 'grafana') {
-      window.open('https://localhost:3000', '_blank', 'noopener,noreferrer');
-      return;
-    }
     setSelectedTab(tab);
   };
 

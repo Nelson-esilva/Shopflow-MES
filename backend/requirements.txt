@@ -5,7 +5,6 @@ djangorestframework==3.16.0
 drf-spectacular==0.28.0
 django-filter==25.1
 Markdown==3.8
-pymongo==4.6.2
 python-dotenv==1.0.1
 psycopg2-binary==2.9.9
 django-allauth==0.54.0
@@ -15,8 +14,5 @@ Pygments==2.19.1
 PyJWT==2.9.0
 sqlparse==0.5.3
 gunicorn>=21.0.0
-clickhouse-connect
-quixstreams==3.15.0
-kafka-python==2.0.2
-clickhouse-driver
-
+clickhouse-connect==0.8.18
+clickhouse-driver==0.2.9

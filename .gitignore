@@ -39,9 +39,6 @@ frontend/.env.*
 clickhouse/.env
 clickhouse/.env.*
 !clickhouse/.env.example
-grafana/.env
-grafana/.env.*
-!grafana/.env.example
 
 # Docker overrides
 docker-compose.override.yml

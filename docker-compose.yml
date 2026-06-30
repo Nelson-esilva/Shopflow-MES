@@ -7,7 +7,6 @@ services:
     container_name: backend-api
     restart: unless-stopped
     entrypoint: /entrypoint.sh
-    # command: gunicorn shopflow.wsgi:application --bind 0.0.0.0:8000 --workers 4 --timeout 120
     command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
@@ -15,6 +14,9 @@ services:
       - ./backend:/app
     env_file:
       - ./docker/.env
+    depends_on:
+      clickhouse:
+        condition: service_healthy
     labels:
       - "io.portainer.accesscontrol.public=true"
     networks:
@@ -72,73 +74,7 @@ services:
     networks:
       - app-network
 
-  kafka_broker_1:
-    image: apache/kafka:latest
-    hostname: kafka_broker_1
-    container_name: kafka_broker_1
-    ports:
-      - "9092:9092"
-      - "9093:9093"
-      - "29092:29092"
-      - "29093:29093"
-    env_file:
-      - ./docker/.env
-    volumes:
-      - ./backend/kafka:/var/lib/kafka/data
-    networks:
-      - app-network
-
-  kafka_consumer:
-    build: 
-      context: .               
-      dockerfile: ./docker/Dockerfile.kafka_consumer
-    image: kafka_consumer
-    container_name: kafka_consumer
-    volumes:
-      - ./backend/kafka:/app/kafka
-      - ./backend:/app
-    depends_on:
-      - kafka_broker_1
-    env_file:
-      - ./docker/.env
-    networks:
-      - app-network
-
-  kafka_streaming:    
-    build: 
-      context: .               
-      dockerfile: ./docker/Dockerfile.kafka_streaming
-    container_name: kafka_streaming
-    image: kafka_streaming
-    volumes:
-      - ./backend/kafka:/app/kafka
-      - ./backend:/app
-    depends_on:
-      - kafka_consumer
-      - kafka_broker_1
-    env_file:
-      - ./docker/.env
-    networks:
-      - app-network
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    depends_on:
-      - clickhouse
-    env_file:
-      - ./docker/.env
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-    networks:
-      - app-network
-
 volumes:
-  grafana_data:
-    driver: local
   postgres_data:
     driver: local
   clickhouse_data:

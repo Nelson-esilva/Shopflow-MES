@@ -10,20 +10,18 @@ O ShopFlow e um sistema MES/MOM (Manufacturing Operations Management) completo q
 - **Linhas e Estacoes** - Configuracao de linhas de producao com estacoes detalhadas
 - **Planos de Producao** - Calendario visual com monitoramento de progresso em tempo real
 - **Dashboards Analiticos** - Graficos interativos (radar, barra, pizza) com dados OLAP
-- **Streaming de Dados** - Ingestao de dados via Kafka para processamento em tempo real
 - **Controle de Qualidade** - Rastreamento de defeitos por estacao e produto
 - **Gestao de Usuarios** - Autenticacao JWT, Google OAuth e controle de permissoes por role
 
 ## Arquitetura
 
 ```
-shopflow-devops/
+Shopflow-MES/
 ├── backend/             # API REST (Django + DRF)
 ├── frontend/            # Interface Web (React + Vite + MUI)
 ├── clickhouse/          # Banco OLAP (ClickHouse)
-├── grafana/             # Dashboards operacionais (Grafana)
 ├── docker/              # Dockerfiles e configuracoes Docker
-├── scripts/             # Scripts utilitarios e de populacao
+├── backend/scripts/     # Seed de dados (PostgreSQL + ClickHouse)
 ├── docker-compose.yml   # Orquestracao de todos os servicos
 └── README.md
 ```
@@ -36,8 +34,6 @@ shopflow-devops/
 | Frontend        | React 19, Vite 6, Material-UI 7        |
 | Banco OLTP      | PostgreSQL 15                           |
 | Banco OLAP      | ClickHouse (MergeTree, TTL, partitions) |
-| Mensageria      | Apache Kafka (KRaft mode)               |
-| Dashboards      | Grafana + ClickHouse Datasource         |
 | Containers      | Docker, Docker Compose                  |
 | Autenticacao    | JWT + Google OAuth 2.0                  |
 
@@ -52,19 +48,14 @@ shopflow-devops/
                     ┌──────▼──────┐
                     │   Backend   │ :8000
                     │ Django/DRF  │
-                    └──┬───┬───┬──┘
-                       │   │   │
-              ┌────────┘   │   └────────┐
-              │            │            │
-       ┌──────▼──┐  ┌─────▼─────┐  ┌───▼───────┐
-       │PostgreSQL│  │   Kafka   │  │ClickHouse │
-       │  (OLTP)  │  │ (Stream)  │  │  (OLAP)   │
-       └─────────┘  └─────┬─────┘  └───┬───────┘
-                           │            │
-                    ┌──────▼──┐   ┌─────▼────┐
-                    │Consumer │   │ Grafana  │ :3000
-                    │Streaming│   │Dashboards│
-                    └─────────┘   └──────────┘
+                    └──┬───────┬──┘
+                       │       │
+              ┌────────┘       └────────┐
+              │                       │
+       ┌──────▼──┐             ┌──────▼───────┐
+       │PostgreSQL│             │  ClickHouse  │
+       │  (OLTP)  │             │   (OLAP)     │
+       └─────────┘             └──────────────┘
 ```
 
 ## Pre-requisitos
@@ -91,7 +82,6 @@ cp docker/.env.example docker/.env
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env
 cp clickhouse/.env.example clickhouse/.env
-cp grafana/.env.example grafana/.env
 ```
 
 Edite os arquivos `.env` e preencha as credenciais necessarias (Google OAuth, SECRET_KEY, etc.).
@@ -104,14 +94,15 @@ Edite os arquivos `.env` e preencha as credenciais necessarias (Google OAuth, SE
 docker compose up --build -d
 ```
 
-### 3. Popular o banco com dados iniciais (seed)
+### 4. Popular os bancos com dados iniciais (seed)
 
 ```bash
-docker exec -it backend-api bash
-python scripts/populate_postgres/populate.py
+docker exec -it backend-api bash -c "python scripts/seed.py"
 ```
 
-### 4. Acessar os servicos
+O script popula o PostgreSQL (dados operacionais) e o ClickHouse (dados analiticos para os dashboards).
+
+### 5. Acessar os servicos
 
 | Servico         | URL                                              |
 |-----------------|--------------------------------------------------|
@@ -119,10 +110,9 @@ python scripts/populate_postgres/populate.py
 | Backend API     | http://localhost:8000                             |
 | Swagger UI      | http://localhost:8000/api/schema/swagger-ui/      |
 | ReDoc           | http://localhost:8000/api/schema/redoc/           |
-| Grafana         | http://localhost:3000                             |
 | ClickHouse HTTP | http://localhost:8123                             |
 
-### 5. Usuarios de teste
+### 6. Usuarios de teste
 
 | Email                | Senha       | Role          |
 |----------------------|-------------|---------------|
@@ -152,19 +142,13 @@ docker compose down -v
 ## Estrutura dos Servicos
 
 ### Backend (`/backend`)
-API REST com Django e Django REST Framework. Gerencia usuarios, produtos, ordens de producao, linhas, estacoes e planos. Integra com ClickHouse para dados analiticos e Kafka para streaming.
+API REST com Django e Django REST Framework. Gerencia usuarios, produtos, ordens de producao, linhas, estacoes e planos. Integra com ClickHouse para dados analiticos.
 
 ### Frontend (`/frontend`)
 Aplicacao React com Vite e Material-UI. Dashboards interativos, calendario de planos de producao, gestao de ordens e visualizacao em tempo real.
 
 ### ClickHouse (`/clickhouse`)
-Banco de dados OLAP para armazenamento analitico. Tabela `workstation_records` com particionamento por mes e TTL de 12 meses.
-
-### Grafana (`/grafana`)
-Dashboards operacionais com datasource ClickHouse provisionado automaticamente. Login: `admin` / `admin`.
-
-### Kafka (via Docker)
-Broker Kafka em modo KRaft (sem Zookeeper). Consumer e Streaming services processam dados em tempo real.
+Banco de dados OLAP para armazenamento analitico. Tabelas `workstation_records`, `daily_line_relativo_consolidado` e `daily_line_absoluto_consolidado` com particionamento e TTL.
 
 ## Licenca
 

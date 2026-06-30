@@ -7,12 +7,16 @@ Configuracao do banco de dados OLAP ClickHouse para armazenamento analitico do S
 ```
 clickhouse/
 ├── clickhouse_init/
-│   └── create_user.sh    # Script de inicializacao (usuario + tabela)
-├── .env.development
+│   └── create_user.sh    # Script de inicializacao (usuario + tabelas)
+├── .env.example
 └── README.md
 ```
 
-## Tabela: `workstation_records`
+## Tabelas
+
+### `workstation_records`
+
+Registros brutos de producao por estacao de trabalho.
 
 | Coluna              | Tipo              | Descricao                                  |
 |---------------------|-------------------|--------------------------------------------|
@@ -25,11 +29,14 @@ clickhouse/
 | `produced_quantity` | UInt16            | Quantidade produzida                       |
 | `has_defect`        | UInt8             | Flag de defeito (0 ou 1)                   |
 | `registered_at`     | DateTime          | Data/hora do registro                      |
-| `data_sended`       | Bool              | Indica se o dado foi enviado               |
 
 - **Engine**: ReplacingMergeTree
 - **Particionamento**: Mensal (toYYYYMM)
 - **TTL**: 12 meses
+
+### `daily_line_relativo_consolidado` e `daily_line_absoluto_consolidado`
+
+Tabelas agregadas para dashboards analiticos. Criadas automaticamente pelo script de init.
 
 ## Conectando
 
@@ -39,4 +46,12 @@ clickhouse-client --host 127.0.0.1 --port 9001 --user clickhouse_server_user --p
 
 # Via container
 docker exec -it clickhouse clickhouse-client --user clickhouse_server_user --password shopflow_password --database production_data
+```
+
+## Populando dados
+
+Os dados analiticos sao populados junto com o seed do PostgreSQL:
+
+```bash
+docker exec -it backend-api bash -c "python scripts/seed.py"
 ```

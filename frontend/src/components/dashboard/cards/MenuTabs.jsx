@@ -6,7 +6,6 @@ const tabs = [
   { label: 'LINHAS', value: 'linhas' },
   { label: 'ESTAÇÕES', value: 'estacoes' },
   { label: 'DEFEITOS', value: 'defeitos' },
-  { label: 'VISUALIZAR NO GRAFANA', value: 'grafana' },
 ];
 
 const MenuTabs = ({ selected, onChange, selectedDate }) => {

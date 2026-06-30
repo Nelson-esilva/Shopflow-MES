@@ -42,8 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     #Django rest framework
-    'rest_framework',    
-    'rest_framework.authtoken',
+    'rest_framework',
     
     #simple-JWT
     'rest_framework_simplejwt',
@@ -63,7 +62,6 @@ INSTALLED_APPS = [
     'production_order',
     'clickhouse_data',
     'production_defect',
-    'daily_workstation_relativo',
 
     # Allauth for social authentication
     'allauth',
@@ -143,8 +141,6 @@ REST_FRAMEWORK = {
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-        #'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -210,10 +206,9 @@ AUTH_USER_MODEL = 'user.User'
 # Configurações do Django Rest Auth
 REST_AUTH = {
     'USE_JWT': True,
-    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
-    'SESSION_LOGIN': False, # Desabilita login por sessão na API,
-    'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer', # **IMPORTANTE:** Substitua pelo seu serializer de detalhes do usuário
-    'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer', # Serializer padrão para registro
+    'SESSION_LOGIN': False,
+    'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer',
+    'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer',
 }
 
 # Configurações do allauth
