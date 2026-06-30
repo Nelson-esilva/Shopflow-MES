@@ -206,6 +206,7 @@ AUTH_USER_MODEL = 'user.User'
 # Configurações do Django Rest Auth
 REST_AUTH = {
     'USE_JWT': True,
+    'TOKEN_MODEL': None,
     'SESSION_LOGIN': False,
     'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer',
     'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer',

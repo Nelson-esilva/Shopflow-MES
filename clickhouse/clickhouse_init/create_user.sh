@@ -9,15 +9,6 @@ for i in $(seq 1 30); do
 done
 echo "ClickHouse server is ready."
 
-echo "Creating database 'production_data' if not exists..."
-clickhouse-client --host localhost --query "CREATE DATABASE IF NOT EXISTS production_data;"
-
-echo "Creating user 'clickhouse_server_user'..."
-clickhouse-client --host localhost --query "
-  CREATE USER IF NOT EXISTS clickhouse_server_user IDENTIFIED BY 'shopflow_password';
-  GRANT ALL ON production_data.* TO clickhouse_server_user;
-"
-
 echo "Creating table 'workstation_records' in production_data..."
 clickhouse-client --host localhost --database production_data --query "
   CREATE TABLE IF NOT EXISTS workstation_records
@@ -82,4 +73,4 @@ clickhouse-client --host localhost --database production_data --query "
   ORDER BY (id, registered_at);
 "
 
-echo "ClickHouse setup complete."
+echo "ClickHouse tables setup complete."

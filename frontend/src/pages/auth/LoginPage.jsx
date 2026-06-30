@@ -1,31 +1,47 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import LoginForm from "../../components/auth/LoginForm";
 import '../../styles/Forms.css';
-import '../../styles/img.css';
-import { Box } from "@mui/material";
+import './LoginPage.css';
+import { Box, Typography } from "@mui/material";
+import FactoryOutlinedIcon from '@mui/icons-material/FactoryOutlined';
 
 function LoginPage() {
-  const navigate = useNavigate();
-
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#f0f2f5', // Um fundo suave para a página
-      }}
-    >
-      <div className="login-container">
-        <div className="box-logo-login-register">
-          <div className="logo-shopflow-login-register"/>
-        </div>
-        <div className="separator"></div>
-        <div className="title-login">LOGIN</div>
-        <LoginForm />
-      </div>
+    <Box className="login-page">
+      <Box className="login-brand-panel">
+        <Box className="login-brand-content">
+          <FactoryOutlinedIcon className="login-brand-icon" />
+          <Typography component="h1" className="login-brand-title">
+            SHOPFLOW
+          </Typography>
+          <Typography component="span" className="login-brand-subtitle">
+            MES
+          </Typography>
+          <Typography className="login-brand-tagline">
+            Manufacturing Execution System
+          </Typography>
+          <Box className="login-brand-divider" />
+          <Typography className="login-brand-description">
+            Gestão inteligente da produção em tempo real
+          </Typography>
+        </Box>
+      </Box>
+
+      <Box className="login-form-panel">
+        <Box className="login-form-wrapper">
+          <Box className="login-form-mobile-brand">
+            <Typography className="login-mobile-title">SHOPFLOW</Typography>
+            <Typography className="login-mobile-subtitle">MES</Typography>
+          </Box>
+
+          <Typography component="h2" className="login-form-title">
+            Acesse sua conta
+          </Typography>
+          <Typography className="login-form-subtitle">
+            Entre com seu e-mail e senha para continuar
+          </Typography>
+          <LoginForm />
+        </Box>
+      </Box>
     </Box>
   );
 }

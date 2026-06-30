@@ -1,1 +1,1 @@
-export { produtosExemplo, ordensProducao, linhasProducao, turnos } from './produtosData'; 
+export { turnos } from './produtosData'; 
